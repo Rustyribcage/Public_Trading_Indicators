@@ -8,7 +8,6 @@
 // @version=5
 indicator("Favorable DXY Overlay", overlay = false)
 
-// Use libraries to fix the 40 request.security problem?
 // Define the symbol for the DXY (Dollar Index) chart
 dxySymbol = "DXY"
 
@@ -54,12 +53,6 @@ if dovishDXYAlert != prevDovishDXYAlert
     alert(message="Dovish DXY below 0.5")
     prevDovishDXYAlert := dovishDXYAlert
 
-// Obsolete alerts.
-// if hawkishDXYAlert
-//    alert(message = "Hawkish DXY above 0.5")
-// if dovishDXYAlert
-//    alert(message = "Dovish DXY below 0.5")
-// Define colors for the range [0, 1]
 colorDovish = color.green
 colorHawkish = color.red
 
@@ -69,7 +62,7 @@ transparency = 50
 // Plot the 5-bar average of normalized DXY data
 plot(averageNormalizedDXY, title="15-Bar Avg Normalized DXY", color=averageNormalizedDXY >= 0.5 ? colorHawkish : colorDovish, linewidth=2, transp=transparency)
 
-// Plot the normalized DXY data as an overlay on the main chart
+// Plot the normalized and color coded data DXY data
 plot(normalizedDXY, title = "Normalized DXY", color = normalizedDXY >= 0.5 ? colorHawkish : colorDovish, linewidth = 2, transp = transparency)
 
 
