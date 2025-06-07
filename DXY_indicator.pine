@@ -1,5 +1,11 @@
-//Github Rustyribcage //
-//@version=5
+// Github Rustyribcage
+// This indicator is written in pinescript code and is designed to be used in tradingview.com to overlay the DXY (Dollar Index) on the chart.
+// It normalizes the DXY data to fit within the range [0, 1] and calculates a 15-bar average.
+// It also provides alerts for significant changes in the DXY state, indicating hawkish or dovish conditions.
+// Many traders realize the importance of understanding what the dollar is doing since everything is measured 
+// in dollars. So if this indicator is high, it is bearish, not bullish! I color coded it so that it was a bit 
+// more intuitive to understand.
+// @version=5
 indicator("Favorable DXY Overlay", overlay = false)
 
 // Use libraries to fix the 40 request.security problem?
