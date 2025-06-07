@@ -1,0 +1,71 @@
+//Github Rustyribcage //
+//@version=5
+indicator("Favorable DXY Overlay", overlay = false)
+
+// Use libraries to fix the 40 request.security problem?
+// Define the symbol for the DXY (Dollar Index) chart
+dxySymbol = "DXY"
+
+// Fetch DXY data using the security function
+dxyClose = request.security(dxySymbol, "D", close)
+
+// Calculate the minimum and maximum values of DXY data
+dxyMin = ta.lowest(dxyClose, 50)
+dxyMax = ta.highest(dxyClose, 50)
+
+// Normalize the DXY data to fit within the range [0, 1]
+normalizedDXY = (dxyClose - dxyMin) / (dxyMax - dxyMin)
+
+// Function to calculate the average of a series over a specified period
+avgSeries(source, length) =>
+    sum = 0.0
+    for i = 0 to length - 1
+        sum := sum + source[i]
+    sum / length
+
+// Calculate the 5-bar average of normalizedDXY
+averageNormalizedDXY = avgSeries(normalizedDXY, 15)
+
+// Initialize variables so that it only alerts me when there is change.
+var bool prevHawkishDXYAlert = false
+var bool prevDovishDXYAlert = false
+
+// Labeling DXY extremes. > >= ? < or <= ? seems to not effect anything. Use these more throughout the script.
+hawkishDXY = normalizedDXY < 1 and averageNormalizedDXY < 1
+dovishDXY = normalizedDXY > 0 and averageNormalizedDXY > 0 
+nonUltraHawkishDXY = normalizedDXY <= 0.9 and averageNormalizedDXY <= 0.9
+nonUltraDovishDXY = normalizedDXY >= 0.1 and averageNormalizedDXY >= 0.1
+
+hawkishDXYAlert = normalizedDXY < 0.5 and averageNormalizedDXY < 0.5
+dovishDXYAlert = normalizedDXY > 0.5 and averageNormalizedDXY >0.5
+
+// Check for state change and trigger alerts
+if hawkishDXYAlert != prevHawkishDXYAlert
+    alert(message="Hawkish DXY above 0.5")
+    prevHawkishDXYAlert := hawkishDXYAlert
+
+if dovishDXYAlert != prevDovishDXYAlert
+    alert(message="Dovish DXY below 0.5")
+    prevDovishDXYAlert := dovishDXYAlert
+
+// Obsolete alerts.
+// if hawkishDXYAlert
+//    alert(message = "Hawkish DXY above 0.5")
+// if dovishDXYAlert
+//    alert(message = "Dovish DXY below 0.5")
+// Define colors for the range [0, 1]
+colorDovish = color.green
+colorHawkish = color.red
+
+// Set the transparency for the colors
+transparency = 50
+
+// Plot the 5-bar average of normalized DXY data
+plot(averageNormalizedDXY, title="15-Bar Avg Normalized DXY", color=averageNormalizedDXY >= 0.5 ? colorHawkish : colorDovish, linewidth=2, transp=transparency)
+
+// Plot the normalized DXY data as an overlay on the main chart
+plot(normalizedDXY, title = "Normalized DXY", color = normalizedDXY >= 0.5 ? colorHawkish : colorDovish, linewidth = 2, transp = transparency)
+
+
+alertcondition(normalizedDXY < 0.5 and averageNormalizedDXY < 0.5, title = "DXY Below 0.5", message = "Dovish DXY is Below 0.5!")
+alertcondition(normalizedDXY > 0.5 and averageNormalizedDXY >0.5, title = "DXY Above 0.5", message = "Hawkish DXY is Above 0.5!")
