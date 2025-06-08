@@ -1,0 +1,27 @@
+// Github Rustyribcage
+// Description: This script calculates the On-Balance Volume (OBV) and standardizes it to a 0-100 scale based on a lookback period.
+// It also plots the Money Flow Index (MFI) for comparison.
+// Just like many other indicators, you can look for crosses.
+// The OBV being standardized allows this to be easier to compare between assets and works better with machine learning.
+//@version=5
+indicator("Standardized OBV (0-100) and MFI", overlay=false)
+
+// OBV calculation
+obv = ta.cum(math.sign(close - close[1]) * volume)
+
+// Input for lookback period to find the min/max OBV
+lookbackPeriod = input.int(14, title="Lookback Period", minval=1)
+
+// Find the minimum and maximum OBV in the lookback period
+minOBV = ta.lowest(obv, lookbackPeriod)
+maxOBV = ta.highest(obv, lookbackPeriod)
+
+// Standardize OBV to a 0-100 scale
+standardizedOBV = (obv - minOBV) / (maxOBV - minOBV) * 100
+
+// Plot the standardized OBV
+plot(standardizedOBV, color=color.blue, title="Standardized OBV (0-100)")
+
+// Optional: Plot MFI for comparison
+mfi = ta.mfi(close, 14)  // Default MFI with 14 periods
+plot(mfi, color=color.green, title="MFI (14)", style=plot.style_line)
