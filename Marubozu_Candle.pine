@@ -1,0 +1,63 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Rustyribcage
+// A bullish marubozu candle is a candle that has no or very little upper wick, indicating strong bullish conviction in the market. 
+//@version=5
+
+indicator("Marubozu Candle")
+// Marubozu candle // -------------------------------------------------------------------------------------------------------------- {
+
+//USER INPUTS
+// Calculate the size of the candle's body
+bodySize = math.abs(close - open)
+
+// Calculate the size of the upper shadow
+upperShadow = high - math.max(open, close)
+
+// Calculate the size of the lower shadow
+lowerShadow = math.min(open, close) - low
+
+// Calculate the size of the upper body (excluding lower shadow)
+upperBody = math.abs(close - open) - lowerShadow
+//-----------------------------------------------------------------------------------
+
+
+// Calculate the total size of the candle (including both upper and lower body)
+totalCandleSize = high - low
+
+// Calculate the close price of the current bar
+currentClose = close
+
+// Calculate the close price of the previous bar (shifted by 1)
+previousClose = ta.sma(close, 1)
+
+// Condition: Check if the current bar's close is greater than the previous bar's close
+increasedValue = currentClose > previousClose
+
+// Calculate the percentage of the lower shadow compared to the total candle size
+lowerShadowPercentage = lowerShadow / totalCandleSize * 100
+upperShadowPercentage = upperShadow / totalCandleSize * 100
+
+// Condition: Lower shadow is less than 5% of the total candle size
+smallLowerWick = lowerShadowPercentage < 10 // was 5
+smallUpperWick = upperShadowPercentage < 5 // was 5
+largeUpperWick = upperShadowPercentage > 90
+
+// Calculate the body size of the current candle Already done?
+// bodySize = zen.getBodySize()
+
+// Calculate the percentage of the body size relative to the candle's total range
+bodyPercentage = bodySize / (high - low)
+
+// Define the threshold for the body percentage (e.g., 70%)
+threshold = 0.7
+
+// Condition for Long Entry
+largeBody = bodyPercentage >= threshold
+
+bullishMarubozu = smallLowerWick and smallUpperWick and close > open // and increasedValue//and open < close
+// bullishMarubozu2 = 
+shootingStarCandle3 = bodySize < 0.05 * upperShadow and lowerShadow >= bodySize * 2 and largeUpperWick
+// and largeBody and close > open
+
+// Plot signals on the chart
+plotshape(bullishMarubozu, style=shape.triangleup, location=location.belowbar, color=color.rgb(76, 175, 79, 62), size=size.small)
