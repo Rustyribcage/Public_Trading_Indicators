@@ -1,0 +1,27 @@
+# macOS system files
+.DS_Store
+
+# Thumbnails
+._*
+
+# Icon files
+Icon?
+
+# Other system files
+.Spotlight-V100
+.Trashes
+
+# Node modules (common for JavaScript projects, optional)
+node_modules/
+
+# Python bytecode files (optional)
+__pycache__/
+*.py[cod]
+
+# Log files (optional)
+*.log
+
+# Editor/IDE files (optional)
+.vscode/
+.idea/
+*.swp
